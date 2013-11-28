@@ -129,7 +129,7 @@ public class StateMachineObjectBuilderImpl<S> extends ObjectBuilderBase<StateMac
             return;
         }
         final VerificationFailureSet failureSet = new VerificationFailureSet();
-        RelationGetterConfigureScanner scanner = new RelationGetterConfigureScanner(this, this, failureSet);
+        RelationGetterConfigureScanner scanner = new RelationGetterConfigureScanner(klass, this, this, failureSet);
         MethodScanner.scanMethodsOnClasses(klass, scanner);
         if ( 0 < failureSet.size() ) throw new VerificationException(failureSet);
     }
@@ -811,8 +811,9 @@ public class StateMachineObjectBuilderImpl<S> extends ObjectBuilderBase<StateMac
 
     @Override
     public StateMachineObjectBuilder<S> build(Class<?> klass, StateMachineObject<S> parent) throws VerificationException {
-        super.build(klass, parent);
+        setPrimaryKey(klass);
         addKey(klass);
+        addKeys(getMetaType().getKeySet());
         verifySyntax(klass);
         configureStateIndicatorAccessor(klass);
         configureConditions(klass);
